@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +15,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.offNamed('/welcome');
+    });
   }
 
   @override

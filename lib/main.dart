@@ -1,12 +1,19 @@
+import 'package:deal_ninja/views/auth-ui/sign-in-screen.dart';
 import 'package:deal_ninja/views/auth-ui/sign-up-screen.dart';
 import 'package:deal_ninja/views/auth-ui/splash-screen.dart';
+import 'package:deal_ninja/views/auth-ui/welcome-screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  try {
+    await Firebase.initializeApp();
+    runApp(MyApp());
+  } catch (e) {
+    print('Error initializing Firebase: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -16,7 +23,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
+      initialRoute: '/splash',
+      getPages: [
+        GetPage(name: '/splash', page: () => SplashScreen()),
+        GetPage(name: '/welcome', page: () => WelcomeScreen()),
+        GetPage(name: '/signin', page: () => SignInScreen()),
+        GetPage(name: '/signup', page: () => SignUpScreen()),
+        GetPage(name: '/main', page: () => SignUpScreen()),
+      ],
     );
   }
 }
