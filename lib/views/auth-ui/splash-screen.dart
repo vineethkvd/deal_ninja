@@ -26,36 +26,33 @@ class _SplashScreenState extends State<SplashScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              height: size.height,
-              width: size.width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('asset/images/Welcome Screen .png')),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: Get.width,
-                      alignment: Alignment.center,
-                      child: Image.asset('asset/images/deal-ninja-logo.png',
-                          width: 220),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 30.0),
+          body: Container(
+            height: size.height,
+            width: size.width,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('asset/images/Welcome Screen .png')),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
                     width: size.width,
                     alignment: Alignment.center,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF1F41BB),
-                    ),
-                  )
-                ],
-              ),
+                    child: Image.asset('asset/images/deal-ninja-logo.png',
+                        width: 220),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 30.0),
+                  width: size.width,
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF1F41BB),
+                  ),
+                )
+              ],
             ),
           )),
     );
