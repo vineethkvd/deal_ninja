@@ -23,12 +23,15 @@ class CartController extends GetxController {
   }
 
   void removeProduct(ProductModel product) {
-    if (_products.containsKey(product) && _products[product] == 1) {
-      _products.removeWhere((key, value) => key == product);
-    } else {
-      _products[product] -= 1;
+    if (_products.containsKey(product)) {
+      if (_products[product] == 1) {
+        _products.removeWhere((key, value) => key == product);
+      } else {
+        _products[product] = (_products[product] ?? 0) - 1;
+      }
     }
   }
+
   get totalAmount => _products.entries
       .map((product) => product.key.price * product.value)
       .toList()
@@ -40,9 +43,12 @@ class CartController extends GetxController {
       .map((product) => product.key.price * product.value)
       .toList();
 
-  get total => _products.entries
+  get total => _products.entries.isNotEmpty
+      ? _products.entries
       .map((product) => product.key.price * product.value)
       .toList()
       .reduce((value, element) => value + element)
-      .toStringAsFixed(2);
+      .toStringAsFixed(2)
+      : "0.00";
+
 }

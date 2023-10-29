@@ -51,38 +51,43 @@ class CartProductCard extends StatelessWidget {
         horizontal: 20.0,
         vertical: 10,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: NetworkImage(
-              product.imageUrl,
-            ),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(
+                  product.imageUrl,
+                ),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: Text(product.name),
+              ),
+              IconButton(
+                onPressed: () {
+                  controller.removeProduct(product);
+
+                    controller.removeProduct(product);
+
+                },
+                icon: Icon(Icons.remove_circle),
+              ),
+              Text('$quantity'),
+              IconButton(
+                onPressed: () {
+                  controller.addProduct(product);
+                },
+                icon: Icon(Icons.add_circle),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Text(product.name),
-          ),
-          IconButton(
-            onPressed: () {
-              controller.removeProduct(product);
-              if (quantity != null && quantity > 1) {
-                controller.removeProduct(product);
-              }
-            },
-            icon: Icon(Icons.remove_circle),
-          ),
-          Text('$quantity'),
-          IconButton(
-            onPressed: () {
-              controller.addProduct(product);
-            },
-            icon: Icon(Icons.add_circle),
-          ),
-        ],
+        ),
       ),
     );
   }
