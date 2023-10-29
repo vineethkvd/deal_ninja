@@ -1,100 +1,86 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
+import '../../controller/cart_controller.dart';
 import '../../controller/product_controller.dart';
 
-class CatalogProducts extends StatefulWidget {
-  const CatalogProducts({super.key});
+class CatalogProducts extends StatelessWidget {
+  final ProductController productController = Get.put(ProductController());
 
-  @override
-  State<CatalogProducts> createState() => _CatalogProductsState();
-}
+  CatalogProducts({Key? key}) : super(key: key);
 
-class _CatalogProductsState extends State<CatalogProducts> {
-  final productController = Get.find<ProductController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GridView.builder(
-        itemCount: productController.products.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: .58,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
+      appBar: AppBar(
+        title: Text('Product Catalog'),
+      ),
+      body: Obx(
+            () => GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          itemCount: productController.products.length,
+          itemBuilder: (BuildContext context, int index) {
+            return CatalogProductCard(index: index);
+          },
         ),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          return Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(.5),
-                        offset: Offset(3, 2),
-                        blurRadius: 7)
-                  ]),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                        ),
-                        child: Image.network(
-                          '${productController.products[index].imageUrl}',
-                          width: double.infinity,
-                        )),
-                  ),
-                  Text(
-                    '${productController.products[index].name}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '${productController.products[index].brand}',
-                      style: TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '₹ ${productController.products[index].price}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        IconButton(
-                            icon: Icon(Icons.add_shopping_cart),
-                            onPressed: () {})
-                      ],
-                    ),
-                  )
-                ],
-              ));
-        },
+      ),
+    );
+  }
+}
+
+class CatalogProductCard extends StatelessWidget {
+  final CartController cartController = Get.put(CartController());
+  final ProductController productController = Get.find();
+  final int index;
+
+  CatalogProductCard({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final product = productController.products[index];
+    print(product);
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Expanded(
+            child: Hero(
+              tag: 'product_image_$index',
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              product.name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          Text(
+            '\$${product.price.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              cartController.addProduct(product);
+              print(product.price);
+            },
+            icon: Icon(Icons.add_shopping_cart),
+          ),
+        ],
       ),
     );
   }
