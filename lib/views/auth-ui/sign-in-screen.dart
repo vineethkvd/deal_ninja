@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../controller/google_auth_controller.dart';
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -14,6 +16,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeConfirmPassword = FocusNode();
   bool _obscurePassword = true;
+  final GoogleAuthController _googleAuthController = Get.put(GoogleAuthController());
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -171,7 +174,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     height: 8,
                   ),  IconButton(
                       onPressed: () {
-
+                        _googleAuthController.signInWithGoogle().then((result) {
+                          if (result != null) {
+                            Get.offNamed('/main');
+                          }
+                        });
+                        print("clicked");
                       },
                       icon: Image.asset(
                           width: 60,
