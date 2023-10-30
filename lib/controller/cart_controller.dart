@@ -6,11 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CartController extends GetxController {
   var _products = {}.obs;
+
   @override
   void onInit() {
     super.onInit();
-    loadCartFromPrefs();
+    loadCartFromPrefs(); // Load cart items during initialization.
   }
+
+
   void addProduct(ProductModel product) {
     if (_products.containsKey(product)) {
       _products[product] += 1;
@@ -24,24 +27,28 @@ class CartController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 2),
     );
+    saveCartToPrefs(); // Save cart after adding a product.
   }
 
   void removeProduct(ProductModel product) {
     if (_products.containsKey(product)) {
       if (_products[product] == 1) {
-        _products.removeWhere((key, value) => key == product);
+        _products.remove(product);
       } else {
         _products[product] = (_products[product] ?? 0) - 1;
       }
     }
+    saveCartToPrefs(); // Save cart after removing a product.
   }
 
-  void saveCartToPrefs() async {
+  Future<void> saveCartToPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final cartJson = json.encode(_products);
     await prefs.setString('cartItems', cartJson);
   }
-  void loadCartFromPrefs() async {
+
+
+  Future<void> loadCartFromPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final cartItems = prefs.getString('cartItems');
     if (cartItems != null) {
@@ -50,11 +57,10 @@ class CartController extends GetxController {
     }
   }
 
-
   @override
-  void dispose() {
-    saveCartToPrefs();
-    super.dispose();
+  void onClose() {
+    saveCartToPrefs(); // Save the cart when the controller is closed.
+    super.onClose();
   }
 
   get totalAmount => _products.entries
@@ -70,9 +76,9 @@ class CartController extends GetxController {
 
   get total => _products.entries.isNotEmpty
       ? _products.entries
-          .map((product) => product.key.price * product.value)
-          .toList()
-          .reduce((value, element) => value + element)
-          .toStringAsFixed(2)
+      .map((product) => product.key.price * product.value)
+      .toList()
+      .reduce((value, element) => value + element)
+      .toStringAsFixed(2)
       : "0.00";
 }
