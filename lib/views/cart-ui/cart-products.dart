@@ -72,9 +72,6 @@ class CartProductCard extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   controller.removeProduct(product);
-
-                    controller.removeProduct(product);
-
                 },
                 icon: Icon(Icons.remove_circle),
               ),
