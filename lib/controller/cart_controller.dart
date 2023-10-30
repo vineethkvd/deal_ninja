@@ -1,12 +1,16 @@
+import 'dart:convert';
 
 import 'package:deal_ninja/model/product_model.dart';
 import 'package:get/get.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartController extends GetxController {
-  // Add a dict to store the products in the cart.
   var _products = {}.obs;
-
+  @override
+  void onInit() {
+    super.onInit();
+    loadCartFromPrefs();
+  }
   void addProduct(ProductModel product) {
     if (_products.containsKey(product)) {
       _products[product] += 1;
@@ -32,6 +36,27 @@ class CartController extends GetxController {
     }
   }
 
+  void saveCartToPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final cartJson = json.encode(_products);
+    await prefs.setString('cartItems', cartJson);
+  }
+  void loadCartFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final cartItems = prefs.getString('cartItems');
+    if (cartItems != null) {
+      final cartData = json.decode(cartItems);
+      _products.assignAll(Map<ProductModel, int>.from(cartData));
+    }
+  }
+
+
+  @override
+  void dispose() {
+    saveCartToPrefs();
+    super.dispose();
+  }
+
   get totalAmount => _products.entries
       .map((product) => product.key.price * product.value)
       .toList()
@@ -45,10 +70,9 @@ class CartController extends GetxController {
 
   get total => _products.entries.isNotEmpty
       ? _products.entries
-      .map((product) => product.key.price * product.value)
-      .toList()
-      .reduce((value, element) => value + element)
-      .toStringAsFixed(2)
+          .map((product) => product.key.price * product.value)
+          .toList()
+          .reduce((value, element) => value + element)
+          .toStringAsFixed(2)
       : "0.00";
-
 }
