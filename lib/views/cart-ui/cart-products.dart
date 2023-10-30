@@ -66,9 +66,7 @@ class CartProductCard extends StatelessWidget {
               SizedBox(
                 width: 20,
               ),
-              Expanded(
-                child: Text(product.name),
-              ),
+              Flexible(child: Text(product.name)),
               IconButton(
                 onPressed: () {
                   controller.removeProduct(product);

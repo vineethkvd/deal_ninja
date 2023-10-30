@@ -8,31 +8,14 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(title: Text("Your Cart")),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        decoration: BoxDecoration(
-          color: Colors.white
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                  width: size.width,
-                  alignment: Alignment.topCenter,
-                  child: CartProducts()),
-            ),
-            Container(
-                margin: EdgeInsets.only(bottom: 20.0),
-                width: size.width,
-                alignment: Alignment.center,
-                child: CartTotal()),
-          ],
-        ),
-      ),
+    return Column(
+      children: [
+        Container(alignment: Alignment.topCenter, child: CartProducts()),
+        Container(
+            margin: EdgeInsets.only(bottom: 20.0),
+            alignment: Alignment.center,
+            child: CartTotal()),
+      ],
     );
   }
 }

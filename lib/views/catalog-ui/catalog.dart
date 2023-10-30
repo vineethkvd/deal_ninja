@@ -11,20 +11,15 @@ class CatalogProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Product Catalog'),
-      ),
-      body: Obx(
-            () => GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          itemCount: productController.products.length,
-          itemBuilder: (BuildContext context, int index) {
-            return CatalogProductCard(index: index);
-          },
+    return Obx(
+          () => GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
         ),
+        itemCount: productController.products.length,
+        itemBuilder: (BuildContext context, int index) {
+          return CatalogProductCard(index: index);
+        },
       ),
     );
   }
