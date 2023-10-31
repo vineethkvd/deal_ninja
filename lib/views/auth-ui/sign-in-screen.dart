@@ -176,7 +176,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       onPressed: () {
                         _googleAuthController.signInWithGoogle().then((result) {
                           if (result != null) {
-                            Get.offNamed('/main');
+                            Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
                           }
                         });
                         print("clicked");

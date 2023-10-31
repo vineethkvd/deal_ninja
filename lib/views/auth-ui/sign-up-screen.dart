@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 import '../../controller/google_auth_controller.dart';
 import '../../controller/sign-up-controller.dart';
+import 'emailvalidationpage.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -154,14 +155,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: 18),
                       ElevatedButton(
                           onPressed: () async {
-                            UserCredential? userCredential =
-                                await _signUpController.signUpMethod(
-                                    context,
-                                    _nameTextController.text,
-                                    _emailTextController.text,
-                                    _passwordTextController.text);
-                            if (userCredential != null) {
-                              Get.offNamed('/welco');
+                            final signUpController =
+                                Get.find<SignUpController>();
+
+                            try {
+                              await signUpController.signupUser(
+                                _emailTextController.text,
+                                _passwordTextController.text,
+                                _nameTextController.text,
+                              );
+                              if (signUpController.currentUser != null) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => EmailValidationPage(
+                                      user: signUpController.currentUser!),
+                                ));
+                              } else {
+                                // No user is currently authenticated
+                                print('No user is currently authenticated');
+                              }
+                            } catch (e) {
+                              Get.snackbar('Error', e.toString());
                             }
                           },
                           style: ButtonStyle(
@@ -214,7 +227,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       onPressed: () {
                         _googleAuthController.signInWithGoogle().then((result) {
                           if (result != null) {
-                            Get.offNamed('/main');
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/main', (route) => false);
                           }
                         });
                         print("clicked");

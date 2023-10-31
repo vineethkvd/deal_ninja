@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../../controller/google_auth_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,6 +12,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final GoogleAuthController _googleAuthController =
+      Get.put(GoogleAuthController());
   bool isSwitchedNotification = false;
   bool isSwitchedDarklight = false;
   String dropdownvalue = 'Malayalam';
@@ -64,13 +70,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: ListTile(
                     leading: Icon(Icons.notifications,
                         size: 30, color: const Color(0xFF4A4A5F)),
-                    title: Text('Notification',style: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 16,
-                    )),
+                    title: Text('Notification',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 16,
+                        )),
                     trailing: Transform.scale(
                       scale:
-                      0.9, // Adjust the scale factor to change the switch size
+                          0.9, // Adjust the scale factor to change the switch size
                       child: Switch(
                         onChanged: (value) {
                           setState(() {
@@ -93,14 +100,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: ListTile(
                     leading: Icon(Icons.dark_mode,
                         size: 30, color: const Color(0xFF4A4A5F)),
-                    title:
-                    Text('Dark/Light Mode',style: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 16,
-                    )),
+                    title: Text('Dark/Light Mode',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 16,
+                        )),
                     trailing: Transform.scale(
                       scale:
-                      0.9, // Adjust the scale factor to change the switch size
+                          0.9, // Adjust the scale factor to change the switch size
                       child: Switch(
                         onChanged: (value) {
                           setState(() {
@@ -123,10 +130,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: ListTile(
                       leading: Icon(Icons.language,
                           size: 30, color: const Color(0xFF4A4A5F)),
-                      title: Text('Language',style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 16,
-                      )),
+                      title: Text('Language',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 16,
+                          )),
                       trailing: DropdownButton(
                         value: dropdownvalue,
                         icon: const Icon(Icons.keyboard_arrow_down),
@@ -148,35 +156,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: ListTile(
                     leading: Icon(Icons.password,
                         size: 30, color: Color(0xFF4A4A5F)),
-                    title:
-                    Text('Change Password', style: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 16,
-                    )),
+                    title: Text('Change Password',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 16,
+                        )),
                   ),
                 ),
                 const Card(
                   color: Color(0xFFF3F4F6),
                   child: ListTile(
                     leading:
-                    Icon(Icons.delete, size: 30, color: Color(0xFF4A4A5F)),
-                    title:
-                    Text('Delete Account',style: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 16,
-                    )),
+                        Icon(Icons.delete, size: 30, color: Color(0xFF4A4A5F)),
+                    title: Text('Delete Account',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 16,
+                        )),
                   ),
                 ),
-                const Card(
-                  color: Color(0xFFF3F4F6),
-                  child: ListTile(
-                    leading:
-                    Icon(Icons.logout, size: 30, color: Color(0xFF4A4A5F)),
-                    title: Text(
-                      'Log Out',
-                      style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 16,
+                GestureDetector(
+                  onTap: () {
+                    _googleAuthController.signOutGoogle().then((value) =>
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/welcome', (route) => false));
+                  },
+                  child: const Card(
+                    color: Color(0xFFF3F4F6),
+                    child: ListTile(
+                      leading: Icon(Icons.logout,
+                          size: 30, color: Color(0xFF4A4A5F)),
+                      title: Text(
+                        'Log Out',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),

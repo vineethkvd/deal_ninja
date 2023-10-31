@@ -15,9 +15,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      // Redirect to '/main' after 3 seconds
-      Get.offNamed('/welcome');
+    Timer(const Duration(seconds: 3), () {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/welcome', (route) => false);
     });
   }
 
