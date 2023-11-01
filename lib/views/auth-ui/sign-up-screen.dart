@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.off(SignInScreen());
+                        Get.off(SignInScreen(),transition: Transition.fadeIn);
                       },
                       child: Text(
                         "Login",

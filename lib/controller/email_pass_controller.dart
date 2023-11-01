@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-import '../views/user-panel/main-screen.dart';
+import '../model/user_model.dart';
 
 class EmailPassController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,7 +16,26 @@ class EmailPassController extends GetxController {
 
       await userCredential.user!.updateDisplayName(name);
       await userCredential.user!.updateEmail(email);
-      await FirestoreServices.saveUser(name, email, userCredential.user!.uid);
+      UserModel userModel = UserModel(
+        userId: userCredential.user!.uid,
+        name: userCredential.user!.displayName ?? name,
+        email: userCredential.user!.email ?? '',
+        imageUrl: userCredential.user!.photoURL ??
+            'https://firebasestorage.googleapis.com/v0/b/dealninja-2b50b.appspot.com/o/User.png?alt=media&token=b2e7d3ec-7ff6-4567-84b5-d9cee26253f2',
+      );
+      try {
+        await FirebaseFirestore.instance // Save user data to Firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set(userModel.toMap());
+      } catch (error) {
+        print('Error saving user data to Firestore: $error');
+        Get.snackbar(
+          "Error",
+          "$error",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
       Get.snackbar('Success', 'Registration Successful');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -39,7 +58,6 @@ class EmailPassController extends GetxController {
       );
 
       return userCredential;
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Get.snackbar('Error', 'No user Found with this Email');
@@ -49,28 +67,5 @@ class EmailPassController extends GetxController {
     } catch (e) {
       print(e);
     }
-  }
-
-  // signinUser(String email, String password) async {
-  //   try {
-  //     await _auth.signInWithEmailAndPassword(email: email, password: password);
-  //     Get.snackbar('Success', 'You are Logged in');
-  //     Get.off(MainScreen());
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'user-not-found') {
-  //       Get.snackbar('Error', 'No user Found with this Email');
-  //     } else if (e.code == 'wrong-password') {
-  //       Get.snackbar('Error', 'Password did not match');
-  //     }
-  //   }
-  // }
-}
-
-class FirestoreServices {
-  static Future<void> saveUser(String name, email, uid) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .set({'email': email, 'name': name});
   }
 }

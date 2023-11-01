@@ -1,6 +1,8 @@
 import 'package:deal_ninja/controller/email_pass_controller.dart';
 import 'package:deal_ninja/controller/product_controller.dart';
 import 'package:deal_ninja/views/auth-ui/splash-screen.dart';
+import 'package:deal_ninja/views/user-panel/main-screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,7 +36,16 @@ class _MyAppState extends State<MyApp> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return GetMaterialApp(home: SplashScreen());
+        return GetMaterialApp(home:  StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return MainScreen();
+            } else {
+              return SplashScreen();
+            }
+          },
+        ));
       },
     );
   }
