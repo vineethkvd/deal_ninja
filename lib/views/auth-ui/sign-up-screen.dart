@@ -1,11 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:deal_ninja/views/auth-ui/email-validation-screen.dart';
+import 'package:deal_ninja/views/auth-ui/sign-in-screen.dart';
+import 'package:deal_ninja/views/user-panel/main-screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../controller/email_pass_controller.dart';
 import '../../controller/google_auth_controller.dart';
-import '../../controller/sign-up-controller.dart';
-import 'emailvalidationpage.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -15,229 +17,257 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final FocusNode _focusNodeEmail = FocusNode();
-  final FocusNode _focusNodePassword = FocusNode();
-  bool _obscurePassword = true;
-  final formKey = GlobalKey<FormState>();
+  final purpleColor = Color(0xff6688FF);
+  final darkTextColor = Color(0xff1F1A3D);
+  final lightTextColor = Color(0xff999999);
+  final textFieldColor = Color(0xffF5F6FA);
+  final borderColor = Color(0xffD9D9D9);
+  final _formKey = GlobalKey<FormState>();
   final _nameTextController = TextEditingController();
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
-
-  final GoogleAuthController _googleAuthController =
-      Get.put(GoogleAuthController());
-  final SignUpController _signUpController = Get.put(SignUpController());
+  Widget getTextField(
+      {required String hint, required var controllerData, required var icons}) {
+    return TextFormField(
+      controller: controllerData,
+      decoration: InputDecoration(
+          prefixIcon: icons,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.r),
+            borderSide: BorderSide(color: Colors.transparent, width: 0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.r),
+            borderSide: BorderSide(color: Colors.transparent, width: 0),
+          ),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          filled: true,
+          fillColor: textFieldColor,
+          hintText: hint,
+          hintStyle: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w400,
+          )),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('asset/images/Welcome Screen .png')),
-        ),
-        child: Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 100),
-                  Text("Create Account",
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 52.h,
+                ),
+                Text(
+                  "Sign Up to Deal Ninja",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: darkTextColor,
+                  ),
+                ),
+                SizedBox(
+                  height: 4.h,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Already have an account? ",
                       style: TextStyle(
-                          fontFamily: 'Poppins-SemiBold',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 35,
-                          color: Color(0xFF1F41BB))),
-                  Text(
-                    "Create an account so you can explore all the",
-                    style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
-                        fontFamily: ' Poppins-SemiBold'),
-                  ),
-                  Text(
-                    "existing jobs",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: ' Poppins-SemiBold'),
-                  ),
-                  const SizedBox(height: 180),
-                  Container(
-                    width: size.width * 0.80,
-                    child: Column(children: [
-                      TextFormField(
-                        controller: _nameTextController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a name';
-                          } else if (value.contains(RegExp(r'[0-9]'))) {
-                            return 'Name cannot contain numbers';
-                          } else if (value.contains(RegExp(r'\s{2,}'))) {
-                            return 'Name cannot have consecutive white spaces';
-                          } else if (value.contains(RegExp(r'[^a-zA-Z\s]'))) {
-                            return 'Name cannot contain special characters';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Username",
-                          prefixIcon: const Icon(Icons.person_outline),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
+                        color: lightTextColor,
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _emailTextController,
-                        focusNode: _focusNodeEmail,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Please enter your email";
-                          } else if (!value.contains("@")) {
-                            return "please enter a valid email";
-                          } else {
-                            return null;
-                          }
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _passwordTextController,
-                        obscureText: _obscurePassword,
-                        focusNode: _focusNodePassword,
-                        keyboardType: TextInputType.visiblePassword,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          prefixIcon: const Icon(Icons.lock),
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                              icon: _obscurePassword
-                                  ? const Icon(Icons.visibility_outlined)
-                                  : const Icon(Icons.visibility_off_outlined)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      ElevatedButton(
-                          onPressed: () async {
-                            final signUpController =
-                                Get.find<SignUpController>();
-
-                            try {
-                              await signUpController.signupUser(
-                                _emailTextController.text,
-                                _passwordTextController.text,
-                                _nameTextController.text,
-                              );
-                              if (signUpController.currentUser != null) {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => EmailValidationPage(
-                                      user: signUpController.currentUser!),
-                                ));
-                              } else {
-                                // No user is currently authenticated
-                                print('No user is currently authenticated');
-                              }
-                            } catch (e) {
-                              Get.snackbar('Error', e.toString());
-                            }
-                          },
-                          style: ButtonStyle(
-                              minimumSize: MaterialStatePropertyAll(
-                                  Size(size.width, 46)),
-                              shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(9))),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Color(0xFF1F41BB))),
-                          child: Text(
-                            "Sign up",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Poppins-Regular',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600),
-                          )),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            Get.offNamed('/signin');
-                          },
-                          child: Center(
-                            child: Text(
-                              "Already have an account",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14),
-                            ),
-                          )),
-                    ]),
-                  ),
-                  const SizedBox(height: 80),
-                  Text(
-                    "Or continue with",
-                    style: TextStyle(
-                        color: Color(0xFF1F41BB),
-                        fontFamily: 'Poppins-Regular',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  IconButton(
+                    ),
+                    TextButton(
                       onPressed: () {
-                        _googleAuthController.signInWithGoogle().then((result) {
+                        Get.off(SignInScreen());
+                      },
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: purpleColor,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 36.h,
+                ),
+                Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        getTextField(
+                          hint: "Full Name",
+                          controllerData: _nameTextController,
+                          icons: const Icon(Icons.person_outline),
+                        ),
+                        SizedBox(
+                          height: 16.h,
+                        ),
+                        getTextField(
+                            hint: "Email",
+                            controllerData: _emailTextController,
+                            icons: const Icon(Icons.email_outlined)),
+                        SizedBox(
+                          height: 16.h,
+                        ),
+                        getTextField(
+                            hint: "Password",
+                            controllerData: _passwordTextController,
+                            icons: const Icon(Icons.lock)),
+                        SizedBox(
+                          height: 16.h,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final emailPassController =
+                                  Get.find<EmailPassController>();
+
+                              try {
+                                await emailPassController.signupUser(
+                                  _emailTextController.text,
+                                  _passwordTextController.text,
+                                  _nameTextController.text,
+                                );
+                                if (emailPassController.currentUser != null) {
+                                  Get.off(EmailValidationScreen(user:emailPassController.currentUser!));
+                                } else {
+                                  // No user is currently authenticated
+                                  print('No user is currently authenticated');
+                                }
+                              } catch (e) {
+                                Get.snackbar('Error', e.toString());
+                              }
+                            },
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(purpleColor),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.white),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(vertical: 14.h)),
+                                textStyle: MaterialStateProperty.all(TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w700,
+                                ))),
+                            child: Text("Create Account"),
+                          ),
+                        ),
+                      ],
+                    )),
+                SizedBox(
+                  height: 16.h,
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Divider()),
+                    SizedBox(
+                      width: 16.w,
+                    ),
+                    Text(
+                      "or sign up via",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: lightTextColor,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16.w,
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () {
+                      try {
+                        final googleController =
+                            Get.find<GoogleAuthController>();
+                        googleController.signInWithGoogle().then((result) {
                           if (result != null) {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                '/main', (route) => false);
+                            Get.off(MainScreen());
                           }
                         });
-                        print("clicked");
-                      },
-                      icon: Image.asset(
-                          width: 60, height: 30, 'asset/images/google.png')),
-                ],
-              ),
-            )),
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    style: ButtonStyle(
+                        side: MaterialStateProperty.all(BorderSide(
+                          color: borderColor,
+                        )),
+                        foregroundColor:
+                            MaterialStateProperty.all(darkTextColor),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 14.h)),
+                        textStyle: MaterialStateProperty.all(TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                        ))),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                            width: 60,
+                            height: 30,
+                            'asset/images/google_icon.png'),
+                        SizedBox(width: 10.w),
+                        Text("Google"),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      " By signing up to Deal Ninja you agree to our ",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: lightTextColor,
+                      ),
+                    ),
+                    SizedBox(
+                      child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "terms and conditions",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: purpleColor,
+                            ),
+                          )),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

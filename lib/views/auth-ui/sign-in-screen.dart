@@ -1,193 +1,240 @@
+import 'package:deal_ninja/views/auth-ui/sign-up-screen.dart';
+import 'package:deal_ninja/views/user-panel/main-screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
+import '../../controller/email_pass_controller.dart';
 import '../../controller/google_auth_controller.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({Key? key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final FocusNode _focusNodeEmail = FocusNode();
-  final FocusNode _focusNodePassword = FocusNode();
-  final FocusNode _focusNodeConfirmPassword = FocusNode();
-  bool _obscurePassword = true;
-  final GoogleAuthController _googleAuthController = Get.put(GoogleAuthController());
+  final purpleColor = Color(0xff6688FF);
+  final darkTextColor = Color(0xff1F1A3D);
+  final lightTextColor = Color(0xff999999);
+  final textFieldColor = Color(0xffF5F6FA);
+  final borderColor = Color(0xffD9D9D9);
+  final _emailTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  Widget getTextField(
+      {required String hint, required TextEditingController controller}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.r),
+          borderSide: BorderSide(color: Colors.transparent, width: 0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.r),
+          borderSide: BorderSide(color: Colors.transparent, width: 0),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        filled: true,
+        fillColor: textFieldColor,
+        hintText: hint,
+        hintStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('asset/images/Welcome Screen .png')),
-        ),
-        child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 100),
-                  Text("Login here",
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 52.h),
+                Text(
+                  "Sign Up to Deal Ninja",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: darkTextColor,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Row(
+                  children: [
+                    Text(
+                      "Do not have an account? ",
                       style: TextStyle(
-                          fontFamily: 'Poppins-SemiBold',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 35,
-                          color: Color(0xFF1F41BB))),
-                  SizedBox(
-                    height: 19,
-                  ),
-                  Text(
-                    "Welcome back you’ve",
-                    style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
-                        fontFamily: ' Poppins-SemiBold'),
-                  ),
-                  Text(
-                    "been missed!",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: ' Poppins-SemiBold'),
-                  ),
-                  const SizedBox(height: 180),
-                  Container(
-                    width: size.width*0.80,
-                    child: Column(children: [
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        focusNode: _focusNodeEmail,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        color: lightTextColor,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Get.off(SignUpScreen());
+                      },
+                      child: Text(
+                        "Create",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: purpleColor,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        obscureText: _obscurePassword,
-                        focusNode: _focusNodePassword,
-                        keyboardType: TextInputType.visiblePassword,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          prefixIcon: const Icon(Icons.lock),
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                              icon: _obscurePassword
-                                  ? const Icon(Icons.visibility_outlined)
-                                  : const Icon(Icons.visibility_off_outlined)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 250 ),
-                        child: TextButton(
-                            onPressed: () {
-                            },
-                            child: Center(
-                              child: Text(
-                                "Forgot password",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 14),
-                              ),
-                            )),
-                      ),
-                      ElevatedButton(
+                    ),
+                  ],
+                ),
+                SizedBox(height: 36.h),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      getTextField(
+                          hint: "Email", controller: _emailTextController),
+                      SizedBox(height: 16.h),
+                      getTextField(
+                          hint: "Password",
+                          controller: _passwordTextController),
+                      SizedBox(height: 16.h),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
                           onPressed: () async {
-
+                            final emailPassController =
+                                Get.find<EmailPassController>();
+                            try {
+                              UserCredential? userCredential =
+                                  await emailPassController.signinUser(
+                                _emailTextController.text,
+                                _passwordTextController.text,
+                              );
+                              if (userCredential!.user!.emailVerified) {
+                                Get.off(MainScreen());
+                              }
+                            } catch (e) {
+                              print(e);
+                            }
                           },
                           style: ButtonStyle(
-                              minimumSize: MaterialStatePropertyAll(
-                                  Size(size.width, 46)),
-                              shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(9))),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Color(0xFF1F41BB))),
-                          child: Text(
-                            "Sign in",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Poppins-Regular',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600),
-                          )),
-                      SizedBox(height: 30,),
-                      TextButton(
-                          onPressed: () {
-                            Get.offNamed('/signup');
-                          },
-                          child: Center(
-                            child: Text(
-                              "Create account",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14),
+                            backgroundColor:
+                                MaterialStateProperty.all(purpleColor),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                            padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(vertical: 14.h)),
+                            textStyle: MaterialStateProperty.all(
+                              TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          )),
-                    ]),
+                          ),
+                          child: Text("Login"),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 80),
-                  Text(
-                    "Or continue with",
-                    style: TextStyle(
-                        color: Color(0xFF1F41BB),
-                        fontFamily: 'Poppins-Regular',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14),
+                ),
+                SizedBox(height: 16.h),
+                Row(
+                  children: [
+                    Expanded(child: Divider()),
+                    SizedBox(width: 16.w),
+                    Text(
+                      "or sign up via",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: lightTextColor,
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () async {
+                      try {
+                        final googleController =
+                            Get.find<GoogleAuthController>();
+                        final result =
+                            await googleController.signInWithGoogle();
+                        if (result != null) {
+                          Get.off(MainScreen());
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: borderColor)),
+                      foregroundColor: MaterialStateProperty.all(darkTextColor),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 14.h)),
+                      textStyle: MaterialStateProperty.all(
+                        TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset('asset/images/google_icon.png',
+                            width: 60, height: 30),
+                        SizedBox(width: 10.w),
+                        Text("Google"),
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),  IconButton(
-                      onPressed: () {
-                        _googleAuthController.signInWithGoogle().then((result) {
-                          if (result != null) {
-                            Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
-                          }
-                        });
-                        print("clicked");
-                      },
-                      icon: Image.asset(
-                          width: 60,
-                          height: 30,
-                          'asset/images/google.png')),
-                ],
-              ),
-            )),
+                ),
+                SizedBox(height: 16.h),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      " By signing up to Deal Ninja you agree to our ",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: lightTextColor,
+                      ),
+                    ),
+                    SizedBox(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          "terms and conditions",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            color: purpleColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

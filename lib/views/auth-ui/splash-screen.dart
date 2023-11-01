@@ -1,7 +1,8 @@
-import 'dart:async';
-
+import 'package:deal_ninja/views/auth-ui/welcome-screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,52 +16,40 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/welcome', (route) => false);
+    Future.delayed(const Duration(seconds: 8), () {
+      Get.off(WelcomeScreen());
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.black,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          body: Container(
-            height: size.height,
-            width: size.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('asset/images/Welcome Screen .png')),
-            ),
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          child: SingleChildScrollView(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Container(
-                    width: size.width,
-                    alignment: Alignment.center,
-                    child: Image.asset('asset/images/deal-ninja-logo.png',
-                        width: 220),
-                  ),
+                SizedBox(
+                  height: 300.h,
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 30.0),
-                  width: size.width,
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF1F41BB),
-                  ),
-                )
+                Center(
+                    child: Image.asset(
+                  'asset/images/deal-ninja-logo.png',
+                  width: 150.w,
+                )),
+                SizedBox(
+                  height: 240.h,
+                ),
+                const CircularProgressIndicator(
+                  color: Color(0xFF1F41BB),
+                ),
               ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

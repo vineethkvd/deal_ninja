@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../controller/google_auth_controller.dart';
+import '../auth-ui/welcome-screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -177,9 +178,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    _googleAuthController.signOutGoogle().then((value) =>
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/welcome', (route) => false));
+                    _googleAuthController.signOutGoogle().then((value) {
+                      Get.off(WelcomeScreen());
+                    });
                   },
                   child: const Card(
                     color: Color(0xFFF3F4F6),
