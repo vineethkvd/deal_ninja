@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deal_ninja/views/cart-ui/cart-screen.dart';
 import 'package:deal_ninja/views/catalog-ui/catalog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -12,7 +13,8 @@ import '../widgets/notification_screen.dart';
 import '../widgets/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final User user;
+  const MainScreen({super.key, required this.user});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -20,6 +22,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GoogleAuthController _authController = Get.find();
+  final currentUser = FirebaseAuth.instance;
   int _currentSelectedIndex = 0;
   void _onTabTapped(int index) {
     setState(() {
@@ -38,53 +41,37 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(),
       drawer: Drawer(
-        child: Obx(() {
-          final user = _authController.user.value;
-          if (user != null) {
-            return FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(user.uid)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    final userData =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    final name = userData['name'] as String;
-                    final email = userData['email'] as String;
-                    final imageUrl = userData['imageUrl'] as String;
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("users")
+              .where("userId", isEqualTo: currentUser.currentUser!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(); // Loading state
+            }
 
-                    return Column(
-                      children: [
-                        UserAccountsDrawerHeader(
-                          accountName: Text(name),
-                          accountEmail: Text(email),
-                          currentAccountPicture: CircleAvatar(
-                            backgroundImage: NetworkImage(imageUrl),
-                          ),
-                        ),
-                        // Add other drawer items here
-                      ],
-                    );
-                  } else {
-                    return Center(
-                      child: Text('User data not found in the drawer.'),
-                    );
-                  }
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return Text('No user data found'); // No data found
+            }
+
+            final userData =
+                snapshot.data!.docs.first.data() as Map<String, dynamic>;
+            final userName = userData['name'] as String;
+            final userEmail = userData['email'] as String;
+
+            return Column(
+              children: [
+                Text(userName),
+                Text(userEmail),
+              ],
             );
-          } else {
-            return Center(
-              child: Text('User not logged in in the drawer.'),
-            );
-          }
-        }),
+          },
+        ),
       ),
       body: Column(children: [
         if (_currentSelectedIndex == 0) BannerWidget(),

@@ -82,7 +82,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.off(SignUpScreen(),transition: Transition.fadeIn);
+                        Get.off(SignUpScreen(), transition: Transition.fadeIn);
                       },
                       child: Text(
                         "Create",
@@ -120,7 +120,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 _passwordTextController.text,
                               );
                               if (userCredential!.user!.emailVerified) {
-                                Get.off(MainScreen());
+                                final user = userCredential.user;
+                                Get.off(MainScreen(user: user!,));
                               }
                             } catch (e) {
                               print(e);
@@ -168,14 +169,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () async {
+                      final googleController = Get.find<GoogleAuthController>();
                       try {
                         final googleController =
                             Get.find<GoogleAuthController>();
-                        final result =
-                            await googleController.signInWithGoogle();
-                        if (result != null) {
-                          Get.off(MainScreen());
-                        }
+                        googleController.signInWithGoogle().then((result) {
+                          if (result != null) {
+                            final user = googleController.user.value;
+                            print(user);
+                            if (user != null) {
+                              Get.off(MainScreen(user: user));
+                            }
+                          }
+                        });
                       } catch (e) {
                         print(e);
                       }

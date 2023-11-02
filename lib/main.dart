@@ -36,11 +36,15 @@ class _MyAppState extends State<MyApp> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return GetMaterialApp(home:  StreamBuilder(
+        return GetMaterialApp(
+            home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return MainScreen();
+              final user = FirebaseAuth.instance.currentUser;
+              return MainScreen(
+                user: user!,
+              );
             } else {
               return SplashScreen();
             }

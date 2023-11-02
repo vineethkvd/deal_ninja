@@ -151,7 +151,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
                           User? user = await emailValidationController.refreshEmail(widget.user);
                           if (user != null && user.emailVerified) {
                             Get.snackbar('Success : ', 'Email has been verified successfully');
-                            Get.off(MainScreen());
+                            Get.off(MainScreen(user: user,));
                           }else{
                             Get.snackbar('Failed : ', 'Email has been not verified check your mail');
                           }

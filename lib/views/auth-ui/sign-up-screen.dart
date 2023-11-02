@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.off(SignInScreen(),transition: Transition.fadeIn);
+                        Get.off(SignInScreen(), transition: Transition.fadeIn);
                       },
                       child: Text(
                         "Login",
@@ -144,7 +144,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   _nameTextController.text,
                                 );
                                 if (emailPassController.currentUser != null) {
-                                  Get.off(EmailValidationScreen(user:emailPassController.currentUser!));
+                                  Get.off(EmailValidationScreen(
+                                      user: emailPassController.currentUser!));
                                 } else {
                                   // No user is currently authenticated
                                   print('No user is currently authenticated');
@@ -204,7 +205,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Get.find<GoogleAuthController>();
                         googleController.signInWithGoogle().then((result) {
                           if (result != null) {
-                            Get.off(MainScreen());
+                            final user = googleController.user.value;
+                            print(user);
+                            if (user != null) {
+                              Get.off(MainScreen(user: user));
+                            }
                           }
                         });
                       } catch (e) {
