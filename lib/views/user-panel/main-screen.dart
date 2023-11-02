@@ -63,9 +63,14 @@ class _MainScreenState extends State<MainScreen> {
                 snapshot.data!.docs.first.data() as Map<String, dynamic>;
             final userName = userData['name'] as String;
             final userEmail = userData['email'] as String;
+            final imageUrl = userData['imageUrl'] as String;
 
             return Column(
               children: [
+                DrawerHeader(
+                  child: CircleAvatar(
+                      backgroundImage: Image.network(imageUrl).image),
+                ),
                 Text(userName),
                 Text(userEmail),
               ],
