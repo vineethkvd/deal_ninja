@@ -121,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               );
                               if (userCredential!.user!.emailVerified) {
                                 final user = userCredential.user;
-                                Get.off(MainScreen(user: user!,));
+                                Get.off(MainScreen());
                               }
                             } catch (e) {
                               print(e);
@@ -178,7 +178,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             final user = googleController.user.value;
                             print(user);
                             if (user != null) {
-                              Get.off(MainScreen(user: user));
+                              Get.off(MainScreen());
                             }
                           }
                         });

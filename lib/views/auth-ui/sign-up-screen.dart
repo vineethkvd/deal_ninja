@@ -34,11 +34,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           prefixIcon: icons,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),
-            borderSide: BorderSide(color: Colors.transparent, width: 0),
+            borderSide: const BorderSide(color: Colors.transparent, width: 0),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),
-            borderSide: BorderSide(color: Colors.transparent, width: 0),
+            borderSide: const BorderSide(color: Colors.transparent, width: 0),
           ),
           contentPadding:
               EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
@@ -208,7 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             final user = googleController.user.value;
                             print(user);
                             if (user != null) {
-                              Get.off(MainScreen(user: user));
+                              Get.off(MainScreen());
                             }
                           }
                         });

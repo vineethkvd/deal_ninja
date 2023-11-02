@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -176,23 +177,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         )),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    _googleAuthController.signOutGoogle().then((value) {
-                      Get.off(WelcomeScreen());
-                    });
-                  },
-                  child: const Card(
-                    color: Color(0xFFF3F4F6),
-                    child: ListTile(
-                      leading: Icon(Icons.logout,
-                          size: 30, color: Color(0xFF4A4A5F)),
-                      title: Text(
-                        'Log Out',
-                        style: TextStyle(
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 16,
-                        ),
+                const Card(
+                  color: Color(0xFFF3F4F6),
+                  child: ListTile(
+                    leading: Icon(Icons.logout,
+                        size: 30, color: Color(0xFF4A4A5F)),
+                    title: Text(
+                      'Log Out',
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 16,
                       ),
                     ),
                   ),

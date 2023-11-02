@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.hasData) {
               final user = FirebaseAuth.instance.currentUser;
               return MainScreen(
-                user: user!,
+
               );
             } else {
               return SplashScreen();

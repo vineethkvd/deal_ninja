@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:deal_ninja/views/auth-ui/welcome-screen.dart';
 import 'package:deal_ninja/views/cart-ui/cart-screen.dart';
 import 'package:deal_ninja/views/catalog-ui/catalog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+
 
 import '../../controller/google_auth_controller.dart';
 import '../banner-ui/banner-widget.dart';
@@ -13,8 +15,8 @@ import '../widgets/notification_screen.dart';
 import '../widgets/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  final User user;
-  const MainScreen({super.key, required this.user});
+
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -22,6 +24,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GoogleAuthController _authController = Get.find();
+  late String userName;
+  late String userEmail;
+  late String imageUrl;
   final currentUser = FirebaseAuth.instance;
   int _currentSelectedIndex = 0;
   void _onTabTapped(int index) {
@@ -61,18 +66,61 @@ class _MainScreenState extends State<MainScreen> {
 
             final userData =
                 snapshot.data!.docs.first.data() as Map<String, dynamic>;
-            final userName = userData['name'] as String;
-            final userEmail = userData['email'] as String;
-            final imageUrl = userData['imageUrl'] as String;
+            userName = userData['name'] as String;
+            userEmail = userData['email'] as String;
+            imageUrl = userData['imageUrl'] as String;
 
             return Column(
               children: [
-                DrawerHeader(
-                  child: CircleAvatar(
-                      backgroundImage: Image.network(imageUrl).image),
+                UserAccountsDrawerHeader(
+                  accountName: Text(userName,
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 16,
+                      )),
+                  accountEmail: Text(userEmail,
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 16,
+                      )),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundImage: imageUrl.isNotEmpty
+                        ? Image.network(imageUrl).image
+                        : Image.asset('asset/images/google_icon.png').image,
+                  ),
                 ),
-                Text(userName),
-                Text(userEmail),
+                ListTile(
+                    title: Text(userName,
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 14,
+                        )),
+                    leading: Icon(Icons.account_circle_rounded)),
+                ListTile(
+                    onTap: () {},
+                    title: Text(userEmail,
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 14,
+                        )),
+                    leading: Icon(Icons.email_outlined)),
+                ListTile(
+                    onTap: () {},
+                    title: Text("Settings",
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 14,
+                        )),
+                    leading: Icon(Icons.settings)),
+                ListTile(
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Get.off(WelcomeScreen());
+                    },
+                    title: Text("Logout"),
+                    leading: Icon(Icons.logout_rounded))
+
+
               ],
             );
           },
