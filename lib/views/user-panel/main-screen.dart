@@ -8,14 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-
 import '../../controller/google_auth_controller.dart';
 import '../banner-ui/banner-widget.dart';
 import '../widgets/notification_screen.dart';
 import '../widgets/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
-
   const MainScreen({super.key});
 
   @override
@@ -119,8 +117,6 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     title: Text("Logout"),
                     leading: Icon(Icons.logout_rounded))
-
-
               ],
             );
           },

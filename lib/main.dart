@@ -1,6 +1,6 @@
 import 'package:deal_ninja/controller/email_pass_controller.dart';
 import 'package:deal_ninja/controller/product_controller.dart';
-import 'package:deal_ninja/views/auth-ui/splash-screen.dart';
+import 'package:deal_ninja/views/auth-ui/forgot_password_screen.dart';
 import 'package:deal_ninja/views/user-panel/main-screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -42,11 +42,9 @@ class _MyAppState extends State<MyApp> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final user = FirebaseAuth.instance.currentUser;
-              return MainScreen(
-
-              );
+              return ForgotPasswordScreen();
             } else {
-              return SplashScreen();
+              return ForgotPasswordScreen();
             }
           },
         ));
